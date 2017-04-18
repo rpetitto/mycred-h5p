@@ -4,21 +4,19 @@
  * Plugin Name:       myCRED H5P
  * Plugin URI:        http://h5p.org/
  * Description:       Adds a myCRED hook for tracking points scored in H5P content.
- * Version:           0.1.1
+ * Version:           0.2
  * Author URI:        http://joubel.com
  * Forked:	      rpetitto
  * Text Domain:       mycredh5p
  * License:           MIT
  * License URI:       http://opensource.org/licenses/MIT
  * Domain Path:       /languages
- * GitHub Plugin URI: https://github.com/h5p/mycred-h5p-wordpress-plugin
+ * GitHub Plugin URI: https://github.com/rpetitto/mycred-h5p
  */
-
 // If this file is called directly, abort.
 if (!defined('WPINC')) {
   die;
 }
-
 add_filter('mycred_setup_hooks', 'mycredh5p_register');
 function mycredh5p_register($installed) {
 	$installed['mycredh5p'] = array(
@@ -28,7 +26,6 @@ function mycredh5p_register($installed) {
 	);
 	return $installed;
 }
-
 /**
  *
  */
@@ -37,17 +34,14 @@ function mycredh5p_badge($references) {
 	return $references;
 }
 add_filter('mycred_all_references', 'mycredh5p_badge');
-
 /**
  *
  */
 function mycredh5p_init() {
-
   /**
    * Class
    */
   class myCRED_Hook_H5P extends myCRED_Hook {
-
     /**
   	 * Construct
   	 */
@@ -57,12 +51,12 @@ function mycredh5p_init() {
   			'defaults' => array(
   			   'completing_h5p' => array(
   				'creds'   => 0,
-  				'log'     => '%plural% for Completing an H5P Activity'
+  				'log'     => '%plural% for Completing an H5P Activity',
+  				'block'   => 0
   			)
   		  )
   		), $hook_prefs, $type);
   	}
-
   	/**
   	 * Hook into H5P
   	 */
@@ -71,20 +65,20 @@ function mycredh5p_init() {
 	  	if ( $this->prefs['completing_h5p']['creds'] != 0 )
 		add_action('h5p_alter_user_result',  array($this, 'h5p_result'), 10, 4);
     }
-
     /**
      * Give points for H5P result
      */
     public function h5p_result($data, $result_id, $content_id, $user_id) {
       // Check if full score
       if ($data['score'] !== $data['max_score']) return;
-
-      // Make sure this is the first result for this content
-      //if ($result_id) return; // (result_id is only used when updating an old score)
-
+      // Make sure this is the first result for this content.
+      if ($result_id) return; // (result_id is only used when updating an old score)
       // Make sure this is a unique event
       if ($this->has_entry('completing_h5p', $content_id, $user_id)) return;
-
+      // Check if box is checked
+      if ( isset( $this->prefs['completing_h5p']['block'] ) && $this->prefs['completing_h5p']['block'] == 1 ) {
+		$this->prefs['completing_h5p']['creds']=$data['score'];
+			}
       // Execute
       $this->core->add_creds(
         'completing_h5p',
@@ -96,10 +90,11 @@ function mycredh5p_init() {
 		$this->mycred_type
       );
     }
-
-
     public function preferences() {
 		$prefs = $this->prefs; ?>
+		$h5p_block = 0;
+			if ( isset( $prefs['completing_h5p']['block'] ) )
+				$h5p_block = $prefs['completing_h5p']['block'];
 
 <label class="subheader" for="<?php echo $this->field_id( array( 'completing_h5p' => 'creds' ) ); ?>"><?php _e( 'Completing an H5P Activity', 'mycred' ); ?></label>
 <ol>
@@ -114,22 +109,20 @@ function mycredh5p_init() {
 		<span class="description"><?php echo $this->available_template_tags( array( 'general', 'post' ) ); ?></span>
 	</li>
 </ol>
+<label class="subheader" for="<?php echo $this->field_id( array( 'completing_h5p', 'block' ) ); ?>"><input type="checkbox" name="<?php echo $this->field_name( array( 'completing_h5p', 'block' ) ); ?>"<?php checked( $h5p_block, 1 ); ?> id="<?php echo $this->field_id( array( 'completing_h5p', 'block' ) ); ?>" value="1" /> <?php echo $this->core->template_tags_general( __( 'User gains %_plural equal to points earned in activity', 'mycred' ) ); ?>
+
 <?php
     }
-
   /**
    * Sanitize Preferences
    */
 	public function sanitise_preferences( $data ) {
 		$new_data = $data;
-
 		// Apply defaults if any field is left empty
 		$new_data['creds'] = ( !empty( $data['creds'] ) ) ? $data['creds'] : $this->defaults['creds'];
 		$new_data['log'] = ( !empty( $data['log'] ) ) ? sanitize_text_field( $data['log'] ) : $this->defaults['log'];
-
 		return $new_data;
 	}
-
   }
 }
 add_action('mycred_pre_init', 'mycredh5p_init');
