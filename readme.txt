@@ -1,6 +1,5 @@
 === Interactive Content – H5P ===
-Contributors: icc0rz
-Donate link: http://h5p.org
+Contributors: rpetitto, icc0rz
 Tags: myCRED, H5P
 Requires at least: 3.8.1
 Tested up to: 4.7
@@ -15,6 +14,12 @@ Adds a myCRED hook for tracking points scored in H5P content.
 Adds a myCRED hook for tracking points scored in H5P content.
 
 == Changelog ==
+
+= 0.2.0 =
+Added option for users to award myCRED equal to points earned in H5P activity.
+
+= 0.1.1 =
+Added functionality for users to customize points awarded.
 
 = 0.1.0 =
 This is the first version of this plugin.
