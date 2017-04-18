@@ -117,9 +117,18 @@ function mycredh5p_init() {
 <?php
     }
 
-    public function sanitise_preferences() {
+  /**
+   * Sanitize Preferences
+   */
+	public function sanitise_preferences( $data ) {
+		$new_data = $data;
 
-    }
+		// Apply defaults if any field is left empty
+		$new_data['creds'] = ( !empty( $data['creds'] ) ) ? $data['creds'] : $this->defaults['creds'];
+		$new_data['log'] = ( !empty( $data['log'] ) ) ? sanitize_text_field( $data['log'] ) : $this->defaults['log'];
+
+		return $new_data;
+	}
 
   }
 }
