@@ -4,7 +4,7 @@
  * Plugin Name:       myCRED H5P
  * Plugin URI:        http://h5p.org/
  * Description:       Adds a myCRED hook for tracking points scored in H5P content.
- * Version:           0.1.0
+ * Version:           0.1.1
  * Author URI:        http://joubel.com
  * Forked:	      rpetitto
  * Text Domain:       mycredh5p
