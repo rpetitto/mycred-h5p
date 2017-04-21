@@ -91,11 +91,11 @@ function mycredh5p_init() {
       );
     }
     public function preferences() {
-		$prefs = $this->prefs; ?>
+		$prefs = $this->prefs;
 		$h5p_block = 0;
 			if ( isset( $prefs['completing_h5p']['block'] ) )
 				$h5p_block = $prefs['completing_h5p']['block'];
-
+	?>
 <label class="subheader" for="<?php echo $this->field_id( array( 'completing_h5p' => 'creds' ) ); ?>"><?php _e( 'Completing an H5P Activity', 'mycred' ); ?></label>
 <ol>
 	<li>
