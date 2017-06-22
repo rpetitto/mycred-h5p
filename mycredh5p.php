@@ -71,7 +71,7 @@ function mycredh5p_init() {
      */
     public function h5p_result($data, $result_id, $content_id, $user_id) {
       // Check if full score or max_required is checked
-      if ($data['score'] !== $data['max_score']) && isset( $this->prefs['completing_h5p']['max_required'] ) && $this->prefs['completing_h5p']['max_required'] == 1 ) return;
+      if ($data['score'] !== $data['max_score'] && isset( $this->prefs['completing_h5p']['max_required'] ) && $this->prefs['completing_h5p']['max_required'] == 1 ) return;
       // Make sure this is the first result for this content.
       if ($result_id) return; // (result_id is only used when updating an old score)
       // Make sure this is a unique event
