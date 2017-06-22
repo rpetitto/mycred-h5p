@@ -4,7 +4,7 @@
  * Plugin Name:       myCRED H5P
  * Plugin URI:        http://h5p.org/
  * Description:       Adds a myCRED hook for tracking points scored in H5P content.
- * Version:           0.2
+ * Version:           0.3
  * Author URI:        http://joubel.com
  * Forked:	      rpetitto
  * Text Domain:       mycredh5p
@@ -50,9 +50,10 @@ function mycredh5p_init() {
   			'id'       => 'mycredh5p',
   			'defaults' => array(
   			   'completing_h5p' => array(
-  				'creds'   => 0,
+  				'max_required' => 0,
+				'creds'   => 0,
   				'log'     => '%plural% for Completing an H5P Activity',
-  				'block'   => 0
+  				'dynamic_points_block'   => 0
   			)
   		  )
   		), $hook_prefs, $type);
@@ -69,14 +70,14 @@ function mycredh5p_init() {
      * Give points for H5P result
      */
     public function h5p_result($data, $result_id, $content_id, $user_id) {
-      // Check if full score
-      if ($data['score'] !== $data['max_score']) return;
+      // Check if full score or max_required is checked
+      if ($data['score'] !== $data['max_score']) && isset( $this->prefs['completing_h5p']['max_required'] ) && $this->prefs['completing_h5p']['max_required'] == 1 ) return;
       // Make sure this is the first result for this content.
       if ($result_id) return; // (result_id is only used when updating an old score)
       // Make sure this is a unique event
       if ($this->has_entry('completing_h5p', $content_id, $user_id)) return;
       // Check if box is checked
-      if ( isset( $this->prefs['completing_h5p']['block'] ) && $this->prefs['completing_h5p']['block'] == 1 ) {
+      if ( isset( $this->prefs['completing_h5p']['dynamic_points_block'] ) && $this->prefs['completing_h5p']['dynamic_points_block'] == 1 ) {
 		$this->prefs['completing_h5p']['creds']=$data['score'];
 			}
       // Execute
@@ -92,10 +93,14 @@ function mycredh5p_init() {
     }
     public function preferences() {
 		$prefs = $this->prefs;
-		$h5p_block = 0;
-			if ( isset( $prefs['completing_h5p']['block'] ) )
-				$h5p_block = $prefs['completing_h5p']['block'];
+	   	$h5p_max_required = 0;
+			if ( isset( $prefs['completing_h5p']['max_required'] ) )
+				$h5p_max_required = $prefs['completing_h5p']['max_required'];
+		$h5p_dynamic_points_block = 0;
+			if ( isset( $prefs['completing_h5p']['dynamic_points_block'] ) )
+				$h5p_dynamic_points_block = $prefs['completing_h5p']['dynamic_points_block'];
 	?>
+<label class="subheader" for="<?php echo $this->field_id( array( 'completing_h5p', 'max_required' ) ); ?>"><input type="checkbox" name="<?php echo $this->field_name( array( 'completing_h5p', 'max_required' ) ); ?>"<?php checked( $h5p_max_required, 1 ); ?> id="<?php echo $this->field_id( array( 'completing_h5p', 'max_required' ) ); ?>" value="1" /> <?php echo $this->core->template_tags_general( __( 'User must earn 100% in activity to earn %_plural', 'mycred' ) ); ?>
 <label class="subheader" for="<?php echo $this->field_id( array( 'completing_h5p' => 'creds' ) ); ?>"><?php _e( 'Completing an H5P Activity', 'mycred' ); ?></label>
 <ol>
 	<li>
@@ -109,7 +114,7 @@ function mycredh5p_init() {
 		<span class="description"><?php echo $this->available_template_tags( array( 'general', 'post' ) ); ?></span>
 	</li>
 </ol>
-<label class="subheader" for="<?php echo $this->field_id( array( 'completing_h5p', 'block' ) ); ?>"><input type="checkbox" name="<?php echo $this->field_name( array( 'completing_h5p', 'block' ) ); ?>"<?php checked( $h5p_block, 1 ); ?> id="<?php echo $this->field_id( array( 'completing_h5p', 'block' ) ); ?>" value="1" /> <?php echo $this->core->template_tags_general( __( 'User gains %_plural equal to points earned in activity', 'mycred' ) ); ?>
+<label class="subheader" for="<?php echo $this->field_id( array( 'completing_h5p', 'dynamic_points_block' ) ); ?>"><input type="checkbox" name="<?php echo $this->field_name( array( 'completing_h5p', 'dynamic_points_block' ) ); ?>"<?php checked( $h5p_dynamic_points_block, 1 ); ?> id="<?php echo $this->field_id( array( 'completing_h5p', 'dynamic_points_block' ) ); ?>" value="1" /> <?php echo $this->core->template_tags_general( __( 'User earns %_plural equal to points earned in activity (overrides # above)', 'mycred' ) ); ?>
 
 <?php
     }
