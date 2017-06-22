@@ -53,7 +53,7 @@ function mycredh5p_init() {
   				'max_required' => 0,
 				'creds'   => 0,
   				'log'     => '%plural% for Completing an H5P Activity',
-  				'dynamic_points_block'   => 0
+  				'dynamic_points_block' => 0
   			)
   		  )
   		), $hook_prefs, $type);
@@ -100,7 +100,6 @@ function mycredh5p_init() {
 			if ( isset( $prefs['completing_h5p']['dynamic_points_block'] ) )
 				$h5p_dynamic_points_block = $prefs['completing_h5p']['dynamic_points_block'];
 	?>
-<label class="subheader" for="<?php echo $this->field_id( array( 'completing_h5p', 'max_required' ) ); ?>"><input type="checkbox" name="<?php echo $this->field_name( array( 'completing_h5p', 'max_required' ) ); ?>"<?php checked( $h5p_max_required, 1 ); ?> id="<?php echo $this->field_id( array( 'completing_h5p', 'max_required' ) ); ?>" value="1" /> <?php echo $this->core->template_tags_general( __( 'User must earn 100% in activity to earn %_plural', 'mycred' ) ); ?>
 <label class="subheader" for="<?php echo $this->field_id( array( 'completing_h5p' => 'creds' ) ); ?>"><?php _e( 'Completing an H5P Activity', 'mycred' ); ?></label>
 <ol>
 	<li>
@@ -115,7 +114,7 @@ function mycredh5p_init() {
 	</li>
 </ol>
 <label class="subheader" for="<?php echo $this->field_id( array( 'completing_h5p', 'dynamic_points_block' ) ); ?>"><input type="checkbox" name="<?php echo $this->field_name( array( 'completing_h5p', 'dynamic_points_block' ) ); ?>"<?php checked( $h5p_dynamic_points_block, 1 ); ?> id="<?php echo $this->field_id( array( 'completing_h5p', 'dynamic_points_block' ) ); ?>" value="1" /> <?php echo $this->core->template_tags_general( __( 'User earns %_plural equal to points earned in activity (overrides # above)', 'mycred' ) ); ?>
-
+<label class="subheader" for="<?php echo $this->field_id( array( 'completing_h5p', 'max_required' ) ); ?>"><input type="checkbox" name="<?php echo $this->field_name( array( 'completing_h5p', 'max_required' ) ); ?>"<?php checked( $h5p_max_required, 1 ); ?> id="<?php echo $this->field_id( array( 'completing_h5p', 'max_required' ) ); ?>" value="1" /> <?php echo $this->core->template_tags_general( __( 'User must earn 100% in activity to earn %_plural', 'mycred' ) ); ?>
 <?php
     }
   /**
