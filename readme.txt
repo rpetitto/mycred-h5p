@@ -14,6 +14,8 @@ Adds a myCRED hook for tracking points scored in H5P content.
 Adds a myCRED hook for tracking points scored in H5P content.
 
 == Changelog ==
+= 0.3.0 =
+Added checkbox to make earning 100% optional to earn points (partial credit)
 
 = 0.2.0 =
 Added option for users to award myCRED equal to points earned in H5P activity.
