@@ -84,12 +84,12 @@ function mycredh5p_init() {
 	if ( isset( $this->prefs['completing_h5p']['random_points_block'] ) && $this->prefs['completing_h5p']['random_points_block'] == 1 ) {
 	$this->prefs['completing_h5p']['creds']= rand( 1 , ['creds'] )
 	return;
-	    
+		}
 	// Check if dynamic box is checked
 	if ( isset( $this->prefs['completing_h5p']['dynamic_points_block'] ) && $this->prefs['completing_h5p']['dynamic_points_block'] == 1 ) {
 		$this->prefs['completing_h5p']['creds']=$data['score'];
 
-			}
+		}
       // Execute
       $this->core->add_creds(
         'completing_h5p',
