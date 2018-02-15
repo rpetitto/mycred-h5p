@@ -50,11 +50,11 @@ function mycredh5p_init() {
   			'id'       => 'mycredh5p',
   			'defaults' => array(
   			   'completing_h5p' => array(
-  				'max_required' => 0,
-				'creds'   => 0,
-  				'log'     => '%plural% for Completing an H5P Activity',
-  				'dynamic_points_block' => 0,
-				'random_points_block' => 0   
+  					'max_required' => 0,
+					'random_points_block' => 0,
+					'creds'   => 0,
+  					'log'     => '%plural% for Completing an H5P Activity',
+  					'dynamic_points_block' => 0  
   			)
   		  )
   		), $hook_prefs, $type);
@@ -71,7 +71,10 @@ function mycredh5p_init() {
      * Give points for H5P result
      */
     public function h5p_result($data, $result_id, $content_id, $user_id) {
-      // Check if full score or max_required is checked
+    //set random points max
+    $randMax = $this->prefs['completing_h5p']['creds'];
+		
+	// Check if full score or max_required is checked
       if ($data['score'] !== $data['max_score'] && isset( $this->prefs['completing_h5p']['max_required'] ) && $this->prefs['completing_h5p']['max_required'] == 1 ) return;
 
 	// Make sure this is the first result for this content.
@@ -82,14 +85,13 @@ function mycredh5p_init() {
       
 	// Check if random points box is checked
 	if ( isset( $this->prefs['completing_h5p']['random_points_block'] ) && $this->prefs['completing_h5p']['random_points_block'] == 1 ) {
-	$this->prefs['completing_h5p']['creds']= rand( 1 , ['creds'] )
-	return;
-		}
+		$this->prefs['completing_h5p']['creds'] = rand( 1 , $randMax );
+			}
+	    
 	// Check if dynamic box is checked
 	if ( isset( $this->prefs['completing_h5p']['dynamic_points_block'] ) && $this->prefs['completing_h5p']['dynamic_points_block'] == 1 ) {
-		$this->prefs['completing_h5p']['creds']=$data['score'];
-
-		}
+		$this->prefs['completing_h5p']['creds']= $data['score'];
+			}
       // Execute
       $this->core->add_creds(
         'completing_h5p',
@@ -98,7 +100,7 @@ function mycredh5p_init() {
         $this->prefs['completing_h5p']['log'],
         $content_id,
         array( 'ref_type' => 'post' ),
-		$this->mycred_type
+			$this->mycred_type
       );
     }
     public function preferences() {
@@ -126,8 +128,8 @@ function mycredh5p_init() {
 		<span class="description"><?php echo $this->available_template_tags( array( 'general', 'post' ) ); ?></span>
 	</li>
 </ol>
-<label class="subheader" for="<?php echo $this->field_id( array( 'completing_h5p', 'dynamic_points_block' ) ); ?>"><input type="checkbox" name="<?php echo $this->field_name( array( 'completing_h5p', 'dynamic_points_block' ) ); ?>"<?php checked( $h5p_dynamic_points_block, 1 ); ?> id="<?php echo $this->field_id( array( 'completing_h5p', 'dynamic_points_block' ) ); ?>" value="1" /> <?php echo $this->core->template_tags_general( __( 'User earns %_plural equal to points earned in activity (overrides # above)', 'mycred' ) ); ?>
 <label class="subheader" for="<?php echo $this->field_id( array( 'completing_h5p', 'random_points_block' ) ); ?>"><input type="checkbox" name="<?php echo $this->field_name( array( 'completing_h5p', 'random_points_block' ) ); ?>"<?php checked( $h5p_random_points_block, 1 ); ?> id="<?php echo $this->field_id( array( 'completing_h5p', 'random_points_block' ) ); ?>" value="1" /> <?php echo $this->core->template_tags_general( __( 'User earns random %_plural where the minimum reward is 1 and the maximum reward is the # above', 'mycred' ) ); ?>
+<label class="subheader" for="<?php echo $this->field_id( array( 'completing_h5p', 'dynamic_points_block' ) ); ?>"><input type="checkbox" name="<?php echo $this->field_name( array( 'completing_h5p', 'dynamic_points_block' ) ); ?>"<?php checked( $h5p_dynamic_points_block, 1 ); ?> id="<?php echo $this->field_id( array( 'completing_h5p', 'dynamic_points_block' ) ); ?>" value="1" /> <?php echo $this->core->template_tags_general( __( 'User earns %_plural equal to points earned in activity (overrides # above)', 'mycred' ) ); ?>
 <label class="subheader" for="<?php echo $this->field_id( array( 'completing_h5p', 'max_required' ) ); ?>"><input type="checkbox" name="<?php echo $this->field_name( array( 'completing_h5p', 'max_required' ) ); ?>"<?php checked( $h5p_max_required, 1 ); ?> id="<?php echo $this->field_id( array( 'completing_h5p', 'max_required' ) ); ?>" value="1" /> <?php echo $this->core->template_tags_general( __( 'User must earn 100% in activity to earn %_plural', 'mycred' ) ); ?>
 <?php
     }
